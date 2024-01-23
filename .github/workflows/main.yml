@@ -27,7 +27,7 @@ jobs:
         run: npm run build
 
       - name: Upload to S3
-        uses: pravin1710/wqd/.github/workflows
+        uses: pravin1710/wqd@v1.0  
         with:
           args: --acl public-read
         env:
