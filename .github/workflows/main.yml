@@ -27,7 +27,7 @@ jobs:
         run: npm run build
 
       - name: Upload to S3
-        uses: master/s3-sync-action@master
+        uses: pravin1710/wqd/.github/workflows@master
         with:
           args: --acl public-read
         env:
