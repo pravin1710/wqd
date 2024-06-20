@@ -48,6 +48,8 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA .
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
     - name: Scan Docker Image with AWS Inspector
       id: inspector
@@ -79,12 +81,6 @@ jobs:
       run: |
         echo "Vulnerability threshold exceeded. Failing the job."
         exit 1
-
-    - name: Push image to Amazon ECR
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '2' }}
-      run: |
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
     - name: Deploy to ECS
       run: |
