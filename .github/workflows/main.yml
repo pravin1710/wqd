@@ -58,7 +58,7 @@ jobs:
         artifact_type: 'container'
         artifact_path: ${{ steps.login-ecr.outputs.registry }}/calendar-service:${{ github.sha }}
         display_vulnerability_findings: "enabled"
-        critical_threshold: 3
+        critical_threshold: 2
         high_threshold: 10
 
 
@@ -78,10 +78,11 @@ jobs:
         echo "Vulnerability threshold check: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
     
     - name: Fail if vulnerability threshold exceeded
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded != '2' }}
+      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == 'true' }}
       run: |
         echo "Vulnerability threshold exceeded. Failing the job."
         exit 1
+
 
 
     - name: Deploy to ECS
