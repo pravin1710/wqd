@@ -78,7 +78,7 @@ jobs:
         echo "Vulnerability threshold check: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
 
     - name: Delete image from ECR if vulnerability threshold exceeded   
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded = '0' }}
+      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '0' }}
       run: |
         aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
         aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
