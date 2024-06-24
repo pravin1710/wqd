@@ -78,7 +78,7 @@ jobs:
         echo "Vulnerability threshold check: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
     
     - name: Fail if vulnerability threshold exceeded
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == 'true' }}
+      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '1' }}
       run: |
         echo "Vulnerability threshold exceeded. Failing the job."
         exit 1
