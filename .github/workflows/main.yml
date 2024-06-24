@@ -85,4 +85,4 @@ jobs:
 
     - name: Deploy to ECS
       run: |
-        aws ecs update-service --cluster Leadsigma-prod-cluster --service calendar-service --force-new-deployment
+        aws ecs update-service --cluster Lead-Stag-cluster --service calendar-service --force-new-deployment
