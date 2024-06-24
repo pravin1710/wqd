@@ -56,10 +56,11 @@ jobs:
       uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1.1.1
       with:
         artifact_type: 'container'
-        artifact_path: calendar-service:$IMAGE_SHA
+        artifact_path: ${{ steps.login-ecr.outputs.registry }}/calendar-service:${{ github.sha }}
         display_vulnerability_findings: "enabled"
         critical_threshold: 3
         high_threshold: 10
+
 
     - name: Upload Inspector scan results as artifacts
       uses: actions/upload-artifact@v3
