@@ -78,10 +78,11 @@ jobs:
         echo "Vulnerability threshold check: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
     
     - name: Fail if vulnerability threshold exceeded
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '3' }}
+      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded != '2' }}
       run: |
         echo "Vulnerability threshold exceeded. Failing the job."
         exit 1
+
 
     - name: Deploy to ECS
       run: |
