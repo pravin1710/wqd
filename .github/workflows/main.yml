@@ -112,4 +112,4 @@ jobs:
     - name: Deploy to ECS
       if:  ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '0' }}
       run: |
-        aws ecs update-service --cluster Lead-Stag-cluster --service calendar-service --force-new-deployment
+        aws ecs update-service --cluster Lead-Stag-cluster --service calendar-ecs_service --force-new-deployment
