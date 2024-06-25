@@ -80,10 +80,10 @@ jobs:
       id: check-threshold
       run: | 
         RESULT=${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
-        STATUS=$?
-        echo ""Vulnerability threshold check result is ${RESULT}"
+        #STATUS=$?
+        echo "Vulnerability threshold check result is $RESULT"
         #condition statement
-        if [[ $STATUS == 0 ]];then
+        if [[ $RESULT == 0 ]];then
            echo "start deployment process using latest image "
         else
           echo "Newly Build docker images failed the threshold values: Start cleaup"
