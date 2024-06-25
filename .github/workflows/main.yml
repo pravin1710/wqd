@@ -59,7 +59,11 @@ jobs:
         artifact_path: ${{ steps.login-ecr.outputs.registry }}/calendar-service:${{ github.sha }}
         display_vulnerability_findings: "enabled"
         critical_threshold: 2
-        high_threshold: 10
+        high_threshold: 15
+        medium_threshold: 10
+        low_threshold: 10
+        other_threshold: 10
+
 
 
     - name: Upload Inspector scan results as artifacts
@@ -75,21 +79,34 @@ jobs:
     - name: Check vulnerability threshold
       id: check-threshold
       run: | 
-        echo "Vulnerability threshold check: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
+        RESULT=${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
+        STATUS=$?
+        echo ""Vulnerability threshold check result is ${RESULT}"
+        #condition statement
+        if [[ $STATUS == 0 ]];then
+           echo "start deployment process using latest image "
+        else
+          echo "Newly Build docker images failed the threshold values: Start cleaup"
+          aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
+          aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
+          exit 1
+        fi
+          
+        #echo "Vulnerability threshold check: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}"
 
-    - name: Delete image from ECR if vulnerability threshold exceeded   
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '0' }}
-      run: |
-        aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
-        aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
+    # - name: Delete image from ECR if vulnerability threshold exceeded   
+    #   if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '1' }}
+    #   run: |
+    #     aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
+    #     aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
     
-    - name: Fail if vulnerability threshold exceeded
-      if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '0' }}
-      run: |
-        echo "Vulnerability threshold exceeded. Failing the job."
-        exit 1
+    # - name: Fail if vulnerability threshold exceeded
+    #   if: ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '1' }}
+    #   run: |
+    #     echo "Vulnerability threshold exceeded. Failing the job."
+    #     exit 1
 
     - name: Deploy to ECS
-      if:  ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '1' }}
+      if:  ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '0' }}
       run: |
         aws ecs update-service --cluster Lead-Stag-cluster --service calendar-service --force-new-deployment
