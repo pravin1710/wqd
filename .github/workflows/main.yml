@@ -24,6 +24,15 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' # Use your preferred Python version
+
+    - name: Install AWS CLI
+      run: |
+        pip install awscli --upgrade --user  
+
     - name: Set up docker build prereqs (QEMU)
       uses: docker/setup-qemu-action@v3
 
