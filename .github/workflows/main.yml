@@ -98,6 +98,22 @@ jobs:
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
             exit 1
           fi
+
+    - name: Fill in the new image ID in ECS task definition
+      id: fill-img-id
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: .aws/calendar_svc.json
+        container-name: calendar-container
+        image: ${{ steps.build-image.outputs.image }}
+
+    - name: Deploy ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.fill-img-id.outputs.task-definition }}
+        service: calendar-ecs_service
+        cluster: Lead-Stag-cluster
+        wait-for-service-stability: false
             
     - name: Deploy to ECS
       if:  ${{ steps.inspector.outputs.vulnerability_threshold_exceeded == '0' }}
