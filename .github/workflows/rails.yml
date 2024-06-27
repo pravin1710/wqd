@@ -34,5 +34,4 @@ jobs:
       env:
         RDS_PASSWORD: root
       run: |
-        RAILS_ENV=test bundle exec rake db:reset
         bundle exec rails test
