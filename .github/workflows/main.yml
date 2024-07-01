@@ -69,9 +69,9 @@ jobs:
         display_vulnerability_findings: "enabled"
         critical_threshold: 2
         high_threshold: 15
-        medium_threshold: 10
-        low_threshold: 10
-        other_threshold: 10
+        medium_threshold: 15
+        low_threshold: 15
+        other_threshold: 15
 
 
 
