@@ -96,7 +96,7 @@ jobs:
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
 
     - name: Check vulnerability threshold
-      id: check-threshold
+      id: check-threshold # stop workflow when thereshold 
       run: | 
           RESULT=${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
           echo "Vulnerability threshold check result is $RESULT"
