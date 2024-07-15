@@ -1,4 +1,4 @@
-name: Image-scan
+name: Build and scan docker image for PR 
 
 on:
   pull_request:
@@ -93,7 +93,6 @@ jobs:
     - name: Check vulnerability threshold
       id: check-threshold1
       run: | 
-            echo "Newly Build docker images failed the threshold values: Start cleaup"
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
 
@@ -104,7 +103,7 @@ jobs:
           echo "Vulnerability threshold check result is $RESULT"
           if [[ $RESULT == 0 ]]
           then
-             echo "start deployment process using latest image "
+             echo "All checks passed by latest image"
           else
             echo "Newly Build docker images failed the threshold values: Start cleaup"
             exit 1
