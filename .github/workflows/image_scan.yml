@@ -67,6 +67,11 @@ jobs:
         artifact_type: 'container'
         artifact_path: ${{ steps.login-ecr.outputs.registry }}/calendar-service:${{ github.sha }}
         display_vulnerability_findings: "enabled"
+        critical_threshold: 1
+        high_threshold: 3
+        medium_threshold: 3
+        low_threshold: 3
+        other_threshold: 3
 
     - name: Upload Inspector scan results as artifacts
       uses: actions/upload-artifact@v3
