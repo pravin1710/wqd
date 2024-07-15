@@ -1,11 +1,15 @@
-name: Image-scan
+name: Build and scan docker image for PR 
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - main # Trigger the workflow on pull requests to the main branch
 
 permissions:
   id-token: write
   contents: read
+  pull-requests: write
+
 
 jobs:
   build-and-scan:
@@ -63,6 +67,11 @@ jobs:
         artifact_type: 'container'
         artifact_path: ${{ steps.login-ecr.outputs.registry }}/calendar-service:${{ github.sha }}
         display_vulnerability_findings: "enabled"
+        critical_threshold: 1
+        high_threshold: 3
+        medium_threshold: 3
+        low_threshold: 3
+        other_threshold: 3
 
     - name: Upload Inspector scan results as artifacts
       uses: actions/upload-artifact@v3
@@ -74,8 +83,33 @@ jobs:
           ${{ steps.inspector.outputs.artifact_sbom }}
           ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
 
+    - name: Post Scan Results as PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        header: "AWS Inspector Scan Results"
+        path: ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
+
+    - name: Delete image pushed to ecr
+      run: | 
+            aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
+            aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
+   
+    - name: echo the output 
+      run: echo "image is"  
+
     - name: Check vulnerability threshold
-      id: check-threshold
+      id: check-threshold # stop workflow when thereshold 
+      run: | 
+          RESULT=${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
+          echo "Vulnerability threshold check result is $RESULT"
+          if [[ $RESULT == 0 ]]
+          then
+             echo "All checks passed by latest image"
+          else
+            echo "Newly Build docker images failed the threshold values: Start cleaup"
+            exit 1
+          fi
       run: | 
             echo "Newly Build docker images failed the threshold values: Start cleaup"
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
