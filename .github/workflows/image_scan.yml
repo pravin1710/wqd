@@ -1,7 +1,7 @@
 name: Image-scan
 
 on:
-  push:
+  pull_request:
     branches:
       - master # Trigger the workflow on push to the master branch
 
