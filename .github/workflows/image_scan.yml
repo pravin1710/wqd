@@ -1,10 +1,6 @@
 name: Image-scan
 
 on:
-  push:
-    branches:
-      - master # Trigger the workflow on push to the master branch
-
   workflow_dispatch:
 
 permissions:
