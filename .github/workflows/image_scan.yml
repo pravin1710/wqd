@@ -91,8 +91,22 @@ jobs:
         path: ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
 
     - name: Check vulnerability threshold
-      id: check-threshold
+      id: check-threshold1
       run: | 
             echo "Newly Build docker images failed the threshold values: Start cleaup"
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
+
+    - name: Check vulnerability threshold
+      id: check-threshold
+      run: | 
+          RESULT=${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
+          echo "Vulnerability threshold check result is $RESULT"
+          if [[ $RESULT == 0 ]]
+          then
+             echo "start deployment process using latest image "
+          else
+            echo "Newly Build docker images failed the threshold values: Start cleaup"
+            exit 1
+          fi
+
