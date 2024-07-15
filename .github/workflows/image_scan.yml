@@ -90,8 +90,7 @@ jobs:
         header: "AWS Inspector Scan Results"
         path: ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
 
-    - name: Check vulnerability threshold
-      id: check-threshold1
+    - name: Delete image pushed to ecr
       run: | 
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
