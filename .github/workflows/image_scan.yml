@@ -3,13 +3,13 @@ name: Image-scan
 on:
   pull_request:
     branches:
-      - master # Trigger the workflow on push to the master branch
-
-  workflow_dispatch:
+      - main # Trigger the workflow on pull requests to the main branch
 
 permissions:
   id-token: write
   contents: read
+  pull-requests: write
+
 
 jobs:
   build-and-scan:
