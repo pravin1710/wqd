@@ -94,6 +94,9 @@ jobs:
       run: | 
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=${{ github.sha }}
             aws ecr batch-delete-image --repository-name calendar-service --image-ids imageTag=latest
+   
+    - name: echo the output 
+      run: echo "image is"  
 
     - name: Check vulnerability threshold
       id: check-threshold # stop workflow when thereshold 
